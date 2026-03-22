@@ -6,7 +6,7 @@ while true
 do
     echo "Restarting program..."
 
-    ./build/infantry
+    ./build/hero
 
     echo "Program exited, restarting..."
 

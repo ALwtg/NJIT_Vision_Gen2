@@ -27,7 +27,6 @@ add_subdirectory(tasks/auto_buff)
 add_subdirectory(tasks/omniperception)
 
 ####################src###################
-add_executable(standard src/standard.cpp)
 add_executable(mt_standard src/mt_standard.cpp)
 add_executable(standard_mpc src/standard_mpc.cpp)
 add_executable(auto_aim_debug_mpc src/auto_aim_debug_mpc.cpp)
@@ -40,7 +39,9 @@ add_executable(uav_debug src/uav_debug.cpp)
 add_executable(gbl_test src/gbl_test.cpp)
 add_executable(mpc_test src/mpc_test.cpp)
 add_executable(infantry_test src/infantry_test.cpp)
+add_executable(infantry src/infantry.cpp)
 add_executable(hero_test src/hero_test.cpp)
+add_executable(hero src/hero.cpp)
 
 add_executable(sentry src/sentry.cpp)
 add_executable(sentry_bp src/sentry_bp.cpp)
@@ -55,9 +56,11 @@ target_link_libraries(sentry_multithread ${OpenCV_LIBS} fmt::fmt yaml-cpp auto_a
 target_link_libraries(gbl_test ${OpenCV_LIBS} fmt::fmt yaml-cpp auto_aim auto_buff tools io)
 target_link_libraries(mpc_test ${OpenCV_LIBS} fmt::fmt yaml-cpp auto_aim auto_buff tools io)
 target_link_libraries(infantry_test ${OpenCV_LIBS} fmt::fmt yaml-cpp auto_aim auto_buff tools io)
+target_link_libraries(infantry ${OpenCV_LIBS} fmt::fmt yaml-cpp auto_aim auto_buff tools io)
 target_link_libraries(hero_test ${OpenCV_LIBS} fmt::fmt yaml-cpp auto_aim auto_buff tools io)
+target_link_libraries(hero ${OpenCV_LIBS} fmt::fmt yaml-cpp auto_aim auto_buff tools io)
 
-target_link_libraries(standard ${OpenCV_LIBS} fmt::fmt yaml-cpp auto_aim auto_buff tools io)
+
 target_link_libraries(mt_standard ${OpenCV_LIBS} fmt::fmt yaml-cpp auto_aim auto_buff tools io)
 target_link_libraries(standard_mpc ${OpenCV_LIBS} fmt::fmt yaml-cpp auto_aim auto_buff tools io)
 target_link_libraries(auto_aim_debug_mpc ${OpenCV_LIBS} fmt::fmt yaml-cpp auto_aim auto_buff tools io)

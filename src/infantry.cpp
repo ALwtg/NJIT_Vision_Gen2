@@ -23,7 +23,7 @@ using namespace std::chrono;
 
 const std::string keys =
   "{help h usage ? |      | 输出命令行参数说明}"
-  "{@config-path   | configs/Hero.yaml | 位置参数，yaml配置文件路径 }";
+  "{@config-path   | configs/Infantry.yaml | 位置参数，yaml配置文件路径 }";
 
 int main(int argc, char * argv[])
 {
@@ -74,7 +74,7 @@ int main(int argc, char * argv[])
 
     auto targets = tracker.track(armors, t);
 
-    auto command = aimer.aim(targets, t, cboard.bullet_speed);
+    auto command = aimer.aim(targets, t, 20);
     
     cboard.send(command);
   }
