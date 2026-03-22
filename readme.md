@@ -386,3 +386,7 @@ WantedBy=multi-user.target
 锐度2 为left 锐度3 为right
 v4l2-ctl -d /dev/video0 --set-ctrl=sharpness=2
 v4l2-ctl -d /dev/video2 --set-ctrl=sharpness=3
+
+# 自启动切记加权限
+chmod +x autostart.sh
+chmod +x hero.sh
