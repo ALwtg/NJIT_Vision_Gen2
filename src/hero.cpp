@@ -74,8 +74,8 @@ int main(int argc, char * argv[])
 
     auto targets = tracker.track(armors, t);
 
-    // auto command = aimer.aim(targets, t, cboard.bullet_speed);
-    auto command = aimer.aim(targets, t, 10);
+    auto command = aimer.aim(targets, t, cboard.bullet_speed);
+    // auto command = aimer.aim(targets, t, 10);
     cboard.send(command);
   }
 
