@@ -89,8 +89,8 @@ int main(int argc, char * argv[])
 
     /// 全向感知逻辑
     if (tracker.state() == "lost")
-      command = decider.decide(yolo, gimbal_pos, usbcam1, usbcam2, back_camera);
-    else
+      // command = decider.decide(yolo, gimbal_pos, usbcam1, usbcam2, back_camera);
+    // else
       command = aimer.aim(targets, timestamp, cboard.bullet_speed, cboard.shoot_mode);
 
     /// 发射逻辑

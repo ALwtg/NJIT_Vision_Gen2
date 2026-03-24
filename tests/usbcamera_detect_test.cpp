@@ -37,12 +37,25 @@ int main(int argc, char * argv[])
   auto last_stamp = std::chrono::steady_clock::now();
   while (!exiter.exit()) {
     usbcam.read(img, timestamp);
-    yolo.detect(img);
+    auto armors = yolo.detect(img);
+
+    // 显示 yolo 识别信息
+    // tools::logger()->info("Detected {} armors", armors.size());
+    for (const auto & armor : armors) {
+        tools::logger()->info(
+            "  name:{} confidence:{:.2f} x:{:.1f} y:{:.1f}",
+            auto_aim::ARMOR_NAMES[armor.name],
+            armor.confidence,
+            armor.center.x,
+            armor.center.y
+        );
+    }
+
 
     auto dt = tools::delta_time(timestamp, last_stamp);
     last_stamp = timestamp;
 
-    tools::logger()->info("{:.2f} fps", 1 / dt);
+    // tools::logger()->info("{:.2f} fps", 1 / dt);
     std::this_thread::sleep_for(10ms);
 
     // if (!display) continue;

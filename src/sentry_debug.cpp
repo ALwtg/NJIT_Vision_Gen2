@@ -48,7 +48,7 @@ int main(int argc, char * argv[])
   // io::Camera back_camera("configs/camera.yaml");
   io::USBCamera usbcam1("video0", config_path);//left
   io::USBCamera usbcam2("video2", config_path);//right
-  io::USBCamera back_camera("video4", config_path);//back
+  io::USBCamera usbcam3("video4", config_path);
 
   auto_aim::YOLO yolo(config_path, false);
   auto_aim::Solver solver(config_path);
@@ -81,7 +81,8 @@ int main(int argc, char * argv[])
     // 前面都与普通自瞄一样 
     /// 全向感知逻辑
     if (tracker.state() == "lost")
-      command = decider.decide(yolo, gimbal_pos, usbcam1, usbcam2, back_camera);
+      command = decider.decide_show(yolo, gimbal_pos, usbcam1, usbcam2, usbcam3);
+      // command = decider.decide(yolo, gimbal_pos, usbcam2);
     else
       command = aimer.aim(targets, timestamp, 22);
     /// 发射逻辑

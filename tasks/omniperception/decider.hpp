@@ -25,12 +25,12 @@ public:
   auto_aim::YOLO & yolo, const Eigen::Vector3d & gimbal_pos, io::USBCamera & usbcam1,
   io::USBCamera & usbcam2, io::USBCamera & back_camera);
 
-  io::Command decide(
-    auto_aim::YOLO & yolo, const Eigen::Vector3d & gimbal_pos, io::USBCamera & usbcam1,
-    io::USBCamera & usbcam2, io::Camera & back_cammera);
+  io::Command decide_show(
+  auto_aim::YOLO & yolo, const Eigen::Vector3d & gimbal_pos, io::USBCamera & usbcam1,
+  io::USBCamera & usbcam2, io::USBCamera & usbcam3);
 
   io::Command decide(
-    auto_aim::YOLO & yolo, const Eigen::Vector3d & gimbal_pos, io::Camera & back_cammera);
+    auto_aim::YOLO & yolo, const Eigen::Vector3d & gimbal_pos, io::USBCamera & back_cammera);
 
   io::Command decide(const std::vector<DetectionResult> & detection_queue);
 
@@ -58,6 +58,11 @@ private:
   double fov_v_, new_fov_v_;
   int mode_;
   int count_;
+  // 连续识别计数器，每个相机独立计数
+  int confirm_count_[3] = {0, 0, 0};          // 连续识别到同一目标的次数
+  auto_aim::ArmorName last_armor_name_[3];     // 上一帧识别到的装甲板名称
+  const int CONFIRM_THRESHOLD = 3;             // 连续几帧才认为是真实目标
+
 
   auto_aim::Color enemy_color_;
   auto_aim::YOLO detector_;

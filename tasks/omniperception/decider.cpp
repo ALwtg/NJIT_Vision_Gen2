@@ -42,91 +42,152 @@ io::Command Decider::decide(
   auto armors = yolo.detect(usb_img);
   auto empty = armor_filter(armors);
   
-  ///debug///
-  cv::resize(usb_img, usb_img, {}, 0.5, 0.5);  // 显示时缩小图片尺寸
-  cv::imshow(cams[count_]->device_name, usb_img);
-  auto key = cv::waitKey(1);
+  // ///debug///
+  // cv::resize(usb_img, usb_img, {}, 0.5, 0.5);  // 显示时缩小图片尺寸
+  // cv::imshow(cams[count_]->device_name, usb_img);
+  // auto key = cv::waitKey(1);
+
+  // 过滤条件2：目标数量异常（误识别通常会出现很多框）
+  if (armors.size() > 2) {
+      tools::logger()->debug("[{}] Too many armors: {}, skip", cams[count_]->device_name, armors.size());
+      count_ = (count_ + 1) % 3;
+      return io::Command{false, false, 0, 0};
+  }
 
   if (!empty) {
+    auto current_name = armors.front().name;
+
+      // 过滤条件2：连续帧确认
+    if (current_name == last_armor_name_[count_]) {
+      confirm_count_[count_]++;  // 同一目标，计数+1
+    } else {
+      confirm_count_[count_] = 1;          // 新目标，重新计数
+      last_armor_name_[count_] = current_name;
+    }
+
+    // 未达到确认阈值，认为是误识别
+    if (confirm_count_[count_] < CONFIRM_THRESHOLD) {
+      tools::logger()->debug("[{}] Confirming target {}/{}: {}",
+          cams[count_]->device_name,
+          confirm_count_[count_], CONFIRM_THRESHOLD,
+          auto_aim::ARMOR_NAMES[current_name]);
+      count_ = (count_ + 1) % 3;
+      return io::Command{false, false, 0, 0};
+    }
+    
+    
     delta_angle = this->delta_angle(armors, cams[count_]->device_name);
-    tools::logger()->debug(
-      "[{} camera] delta yaw:{:.2f},target pitch:{:.2f},armor number:{},armor name:{}",
-      cams[count_]->device_name, delta_angle[0], delta_angle[1],
-      armors.size(), auto_aim::ARMOR_NAMES[armors.front().name]);
+    // tools::logger()->info(
+    //   "[{} camera] delta yaw:{:.2f},target pitch:{:.2f},armor number:{},armor name:{}",
+    //   cams[count_]->device_name, tools::limit_rad(gimbal_pos[0] + delta_angle[0] / 57.3)*57.3, delta_angle[1],
+    //   armors.size(), auto_aim::ARMOR_NAMES[armors.front().name]);
 
     count_ = (count_ + 1) % 3;
-
     return io::Command{
       true, false, tools::limit_rad(gimbal_pos[0] + delta_angle[0] / 57.3),
       tools::limit_rad(delta_angle[1] / 57.3)};
   }
 
+  // 没有目标，重置计数器
+  confirm_count_[count_] = 0;
   count_ = (count_ + 1) % 3;
   // 如果没有找到目标，返回默认命令
   return io::Command{false, false, 0, 0};
 }
 
 
-io::Command Decider::decide(
+io::Command Decider::decide_show(
   auto_aim::YOLO & yolo, const Eigen::Vector3d & gimbal_pos, io::USBCamera & usbcam1,
-  io::USBCamera & usbcam2, io::Camera & back_camera)
+  io::USBCamera & usbcam2, io::USBCamera & usbcam3)
 {
   Eigen::Vector2d delta_angle;
-  io::USBCamera * cams[] = {&usbcam1, &usbcam2};
+  io::USBCamera * cams[] = {&usbcam1, &usbcam2, &usbcam3};
 
   cv::Mat usb_img;
   std::chrono::steady_clock::time_point timestamp;
   if (count_ < 0 || count_ > 2) {
     throw std::runtime_error("count_ out of valid range [0,2]");
-  }
-  if (count_ == 2) {
-    back_camera.read(usb_img, timestamp);
-  } else {
-    cams[count_]->read(usb_img, timestamp);
-  }
+  } 
+  cams[count_]->read(usb_img, timestamp);  
+
   auto armors = yolo.detect(usb_img);
   auto empty = armor_filter(armors);
+  
+  ///debug///
+  cv::resize(usb_img, usb_img, {}, 0.5, 0.5);  // 显示时缩小图片尺寸
+  cv::imshow(cams[count_]->device_name, usb_img);
+  auto key = cv::waitKey(1);
+
+  // 过滤条件2：目标数量异常（误识别通常会出现很多框）
+  if (armors.size() > 2) {
+      tools::logger()->debug("[{}] Too many armors: {}, skip", cams[count_]->device_name, armors.size());
+      count_ = (count_ + 1) % 3;
+      return io::Command{false, false, 0, 0};
+  }
 
   if (!empty) {
-    if (count_ == 2) {
-      delta_angle = this->delta_angle(armors, "back");
+    auto current_name = armors.front().name;
+
+      // 过滤条件2：连续帧确认
+    if (current_name == last_armor_name_[count_]) {
+      confirm_count_[count_]++;  // 同一目标，计数+1
     } else {
-      // left or right
-      delta_angle = this->delta_angle(armors, cams[count_]->device_name);
+      confirm_count_[count_] = 1;          // 新目标，重新计数
+      last_armor_name_[count_] = current_name;
     }
 
-    tools::logger()->debug(
+    // 未达到确认阈值，认为是误识别
+    if (confirm_count_[count_] < CONFIRM_THRESHOLD) {
+      tools::logger()->debug("[{}] Confirming target {}/{}: {}",
+          cams[count_]->device_name,
+          confirm_count_[count_], CONFIRM_THRESHOLD,
+          auto_aim::ARMOR_NAMES[current_name]);
+      count_ = (count_ + 1) % 3;
+      return io::Command{false, false, 0, 0};
+    }
+    
+    
+    delta_angle = this->delta_angle(armors, cams[count_]->device_name);
+    tools::logger()->info(
       "[{} camera] delta yaw:{:.2f},target pitch:{:.2f},armor number:{},armor name:{}",
-      (count_ == 2 ? "back" : cams[count_]->device_name), delta_angle[0], delta_angle[1],
+      cams[count_]->device_name, tools::limit_rad(gimbal_pos[0] + delta_angle[0] / 57.3)*57.3, delta_angle[1],
       armors.size(), auto_aim::ARMOR_NAMES[armors.front().name]);
 
     count_ = (count_ + 1) % 3;
-
     return io::Command{
       true, false, tools::limit_rad(gimbal_pos[0] + delta_angle[0] / 57.3),
       tools::limit_rad(delta_angle[1] / 57.3)};
   }
 
+  // 没有目标，重置计数器
+  confirm_count_[count_] = 0;
   count_ = (count_ + 1) % 3;
   // 如果没有找到目标，返回默认命令
   return io::Command{false, false, 0, 0};
 }
 
 io::Command Decider::decide(
-  auto_aim::YOLO & yolo, const Eigen::Vector3d & gimbal_pos, io::Camera & back_cammera)
+  auto_aim::YOLO & yolo, const Eigen::Vector3d & gimbal_pos, io::USBCamera & back_camera)
 {
   cv::Mat img;
   std::chrono::steady_clock::time_point timestamp;
-  back_cammera.read(img, timestamp);
+  back_camera.read(img, timestamp);
   auto armors = yolo.detect(img);
+
+    // 过滤条件2：目标数量异常（误识别通常会出现很多框）
+  if (armors.size() >=2) {
+      tools::logger()->debug("[{}] Too many armors: {}, skip", back_camera.device_name, armors.size());
+      return io::Command{false, false, 0, 0};
+  }
+
   auto empty = armor_filter(armors);
 
   cv::resize(img, img, {}, 0.5, 0.5);  // 显示时缩小图片尺寸
-  cv::imshow("back", img);
+  cv::imshow(back_camera.device_name, img);
   auto key = cv::waitKey(1);
   
   if (!empty) {
-    auto delta_angle = this->delta_angle(armors, "back");
+    auto delta_angle = this->delta_angle(armors, back_camera.device_name);
     tools::logger()->debug(
       "[back camera] delta yaw:{:.2f},target pitch:{:.2f},armor number:{},armor name:{}",
       delta_angle[0], delta_angle[1], armors.size(), auto_aim::ARMOR_NAMES[armors.front().name]);
@@ -173,7 +234,8 @@ Eigen::Vector2d Decider::delta_angle(
 
   else {
     delta_angle[0] = 180 + (new_fov_h_ / 2) - armors.front().center_norm.x * new_fov_h_;
-    delta_angle[1] = armors.front().center_norm.y * new_fov_v_ - new_fov_v_ / 2;
+    // delta_angle[1] = armors.front().center_norm.y * new_fov_v_ - new_fov_v_ / 2 + 15;// 15度相机倾角
+    delta_angle[1] = 0;
     return delta_angle;
   }
 }
@@ -181,13 +243,14 @@ Eigen::Vector2d Decider::delta_angle(
 bool Decider::armor_filter(std::list<auto_aim::Armor> & armors)
 {
   if (armors.empty()) return true;
+  armors.remove_if([](const auto_aim::Armor & a) {return a.confidence < 0.85; });  // 低于 0.7 的识别结果丢弃});
   // 过滤非敌方装甲板
   armors.remove_if([&](const auto_aim::Armor & a) { return a.color != enemy_color_; });
-
   // 25赛季没有5号装甲板
-  // armors.remove_if([&](const auto_aim::Armor & a) { return a.name == auto_aim::ArmorName::five; });
+  armors.remove_if([&](const auto_aim::Armor & a) { return a.name == auto_aim::ArmorName::five; });
   // 不打工程
   armors.remove_if([&](const auto_aim::Armor & a) { return a.name == auto_aim::ArmorName::two; });
+  armors.remove_if([&](const auto_aim::Armor & a) { return a.name == auto_aim::ArmorName::four; });
   // 不打前哨站
   armors.remove_if(
     [&](const auto_aim::Armor & a) { return a.name == auto_aim::ArmorName::outpost; });
