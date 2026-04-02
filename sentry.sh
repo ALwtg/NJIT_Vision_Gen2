@@ -1,14 +1,14 @@
-#!/bin/bash
+# #!/bin/bash
 
-cd ~/Desktop/NJIT_Vision/
+# cd ~/Desktop/NJIT_Vision/
 
-while true
-do
-    echo "Restarting program..."
+# while true
+# do
+#     echo "Restarting program..."
 
-    ./build/sentry
+#     ./build/sentry
 
-    echo "Program exited, restarting..."
+#     echo "Program exited, restarting..."
 
-    sleep 2
-done
+#     sleep 2
+# done

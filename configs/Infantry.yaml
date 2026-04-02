@@ -1,5 +1,5 @@
-# enemy_color: "red"
-enemy_color: "blue"
+enemy_color: "red"
+# enemy_color: "blue"
 
 #####-----神经网络参数-----#####
 yolo_name: yolov5
@@ -11,7 +11,7 @@ device: GPU
 min_confidence: 0.8
 use_traditional: true
 
-#####-----ROI-----#####
+#####-----ROI-----##### 
 roi: 
   x: 420
   y: 50
@@ -38,8 +38,9 @@ outpost_max_temp_lost_count: 75
 
 #####-----aimer参数-----#####
 # Yaw2
-yaw_offset: -1.5 # degree -2.5
-pitch_offset: 1 # degree 2
+# +逆时针
+yaw_offset: -5 # degree -2.5
+pitch_offset: 3 # degree 2
 comming_angle: 65 # degree
 leaving_angle: 39 # degree
 decision_speed: 7 # rad/s
@@ -53,7 +54,7 @@ judge_distance: 2 #距离判断阈值
 auto_fire: true # 是否由自瞄控制射击
 
 camera_name: "hikrobot"
-exposure_ms: 1.5
+exposure_ms: 0.8
 gain: 16.9
 vid_pid: "2bdf:0001"
 

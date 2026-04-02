@@ -81,8 +81,8 @@ int main(int argc, char * argv[])
 
     auto targets = tracker.track(armors, t);
 
-    auto command = aimer.aim(targets, t, cboard.bullet_speed);
-    // auto command = aimer.aim(targets, t, 20);
+    // auto command = aimer.aim(targets, t, cboard.bullet_speed);
+    auto command = aimer.aim(targets, t, 24);
 
     /// 发射逻辑
     command.shoot = shooter.shoot(command, aimer, targets, gimbal_pos);
