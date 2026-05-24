@@ -51,7 +51,7 @@ void CBoard::send(Command command) const
   frame.can_dlc = 8;
   frame.data[0] = (command.control) ? 1 : 0;
   frame.data[1] = (command.shoot) ? 1 : 0;
-  frame.data[2] = (int16_t)(command.yaw * 1e4) >> 8;
+  frame.data[2] = (int16_t)(command.yaw * 1e4) >> 8;//高八位
   frame.data[3] = (int16_t)(command.yaw * 1e4);
   frame.data[4] = (int16_t)(command.pitch * 1e4) >> 8;
   frame.data[5] = (int16_t)(command.pitch * 1e4);

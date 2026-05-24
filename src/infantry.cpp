@@ -53,7 +53,7 @@ int main(int argc, char * argv[])
 
   auto mode = io::Mode::idle;
   auto last_mode = io::Mode::idle;
-
+  //初始化完毕
   while (!exiter.exit()) {
     camera.read(img, t);
     q = cboard.imu_at(t - 1ms);
@@ -74,7 +74,7 @@ int main(int argc, char * argv[])
 
     auto targets = tracker.track(armors, t);
 
-    auto command = aimer.aim(targets, t,24);
+    auto command = aimer.aim(targets, t,24);//弹速固定为24
     
     cboard.send(command);
   }

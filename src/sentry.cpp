@@ -66,7 +66,7 @@ int main(int argc, char * argv[])
   while (!exiter.exit()) {
     camera.read(img, timestamp);
     Eigen::Quaterniond q = cboard.imu_at(timestamp - 1ms);
-    // recorder.record(img, q, timestamp);
+    // recorder.record(img, q, timestamp);//数据录制
 
     /// 自瞄核心逻辑
     solver.set_R_gimbal2world(q);
@@ -75,10 +75,12 @@ int main(int argc, char * argv[])
 
     auto armors = yolo.detect(img);
 
+    //通过 ROS2 获取敌方状态，识别无敌装甲板
     // decider.get_invincible_armor(ros2.subscribe_enemy_status());
 
     decider.armor_filter(armors);
 
+    //通过 ROS2 接收指定自瞄目标
     // decider.get_auto_aim_target(armors, ros2.subscribe_autoaim_target());
 
     decider.set_priority(armors);
@@ -86,13 +88,20 @@ int main(int argc, char * argv[])
     auto targets = tracker.track(armors, timestamp);
 
     // io::Command command{false, false, 0, 0};
-
-    /// 全向感知逻辑
-    if (tracker.state() == "lost")
-      // command = decider.decide(yolo, gimbal_pos, usbcam1, usbcam2, back_camera);
-    // else
-      command = aimer.aim(targets, timestamp, cboard.bullet_speed, cboard.shoot_mode);
-
+    //#####################################################################################
+    /// 全向感知逻辑（此处逻辑似乎有问题）##########################################################3
+    if (tracker.state() == "lost")//如果目标丢失
+    {
+      command = decider.decide(yolo, gimbal_pos, usbcam1, usbcam2, back_camera); //全向感知轮训搜索目标
+    }
+    else                          //如果发现目标
+    {
+      command = aimer.aim(targets, timestamp, cboard.bullet_speed, cboard.shoot_mode);//自瞄，计算云台瞄准角
+    }
+    //#####################################################################################
+    
+    
+    
     /// 发射逻辑
     command.shoot = shooter.shoot(command, aimer, targets, gimbal_pos);
 

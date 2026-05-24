@@ -39,12 +39,12 @@ outpost_max_temp_lost_count: 75
 #####-----aimer参数-----#####
 # Yaw2
 # +逆时针
-yaw_offset: -5 # degree -2.5
-pitch_offset: 3 # degree 2
-comming_angle: 65 # degree
-leaving_angle: 39 # degree
-decision_speed: 7 # rad/s
-high_speed_delay_time: 0.03 # s
+yaw_offset: -5 # degree -2.5   偏右了：增大 yaw_offset
+pitch_offset: 3 # degree 2     打高了：增大 pitch_offset
+comming_angle: 65 # degree     增大 comming_angle 打侧面的装甲板
+leaving_angle: 39 # degree     增大 leaving_angle 发射子弹更激进
+decision_speed: 7 # rad/s      增大 decision_speed 更不容易进入高速模式 （小陀螺明显跟不上就增大）
+high_speed_delay_time: 0.03 # s    增大 high_speed_delay_time 对高速目标提前量更大
 low_speed_delay_time: 0.015 # s planner use this value
 
 #####-----shooter参数-----#####q
