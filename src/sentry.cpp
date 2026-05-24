@@ -70,8 +70,8 @@ int main(int argc, char * argv[])
 
     /// 自瞄核心逻辑
     solver.set_R_gimbal2world(q);
-
-    Eigen::Vector3d gimbal_pos = tools::eulers(solver.R_gimbal2world(), 2, 1, 0);
+    //把旋转矩阵转换成按照 Z-Y-X 顺序表示的欧拉角
+    Eigen::Vector3d gimbal_pos = tools::eulers(solver.R_gimbal2world(), 2, 1, 0);//2 1 0表示z y x
 
     auto armors = yolo.detect(img);
 
