@@ -74,7 +74,7 @@ int main(int argc, char * argv[])
 
     auto targets = tracker.track(armors, t);
 
-    auto command = aimer.aim(targets, t,24);//弹速固定为24
+    auto command = aimer.aim(targets, t,24);//弹速固定为24##################################
     
     cboard.send(command);
   }
