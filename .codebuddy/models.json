@@ -1,0 +1,59 @@
+{
+  "models": [
+    {
+      "name": "gpt-5.5-easyapi",
+      "id": "gpt-5.5",
+      "vendor": "OpenAI",
+      "url": "http://192.168.1.47:5210/v1/chat/completions",
+      "apiKey": "sk-6b106",
+      "maxInputTokens": 128000,
+      "maxOutputTokens": 16384,
+      "supportsToolCall": true,
+      "supportsImages": true
+    }
+    ,
+    {
+      "name": "claude-opus-4-6-easyapi",
+      "id": "claude-opus-4-6",
+      "vendor": "OpenAI",
+      "url": "http://192.168.1.47:5210/v1/chat/completions",
+      "apiKey": "sk-6b106",
+      "maxInputTokens": 1000000,
+      "maxOutputTokens": 128000,
+      "supportsToolCall": true,
+      "supportsImages": true
+    }
+    ,
+    {
+      "name": "claude-sonnet-4-6-easyapi",
+      "id": "claude-sonnet-4-6",
+      "vendor": "OpenAI",
+      "url": "http://192.168.1.47:5210/v1/chat/completions",
+      "apiKey": "sk-6b106",
+      "maxInputTokens": 1000000,
+      "maxOutputTokens": 128000,
+      "supportsToolCall": true,
+      "supportsImages": true
+    }
+    ,
+    {
+      "name": "gemini-3.1-pro-preview-easyapi",
+      "id": "gemini-3.1-pro-preview",
+      "vendor": "OpenAI",
+      "url": "http://192.168.1.47:5210/v1/chat/completions",
+      "apiKey": "sk-6b106",
+      "maxInputTokens": 1000000,
+      "maxOutputTokens": 128000,
+      "supportsToolCall": true,
+      "supportsImages": true
+    }
+
+    
+  ],
+  "availableModels": [
+    "gpt-5.5",
+    "claude-opus-4-6",
+    "claude-sonnet-4-6",
+    "gemini-3.1-pro-preview"
+  ]
+}
