@@ -63,6 +63,7 @@ int main(int argc, char * argv[])
   //////////////////
   while (!exiter.exit()) {
     camera.read(img, t);
+    //cv::rotate(img, img, cv::ROTATE_90_COUNTERCLOCKWISE);
     q = cboard.imu_at(t - 1ms);
     mode = cboard.mode;
 

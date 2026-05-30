@@ -49,15 +49,21 @@ void CBoard::send(Command command) const
   can_frame frame;
   frame.can_id = send_canid_;
   frame.can_dlc = 8;
+
+  constexpr double RAD_TO_DEG = 57.29577951308232;
+  int16_t yaw_deg = static_cast<int16_t>(command.yaw * RAD_TO_DEG * 1e2);
+  int16_t pitch_deg = static_cast<int16_t>(command.pitch * RAD_TO_DEG * 1e2);
+
   frame.data[0] = (command.control) ? 1 : 0;
   frame.data[1] = (command.shoot) ? 1 : 0;
-  frame.data[2] = (int16_t)(command.yaw * 1e4) >> 8;//高八位
-  frame.data[3] = (int16_t)(command.yaw * 1e4);
-  frame.data[4] = (int16_t)(command.pitch * 1e4) >> 8;
-  frame.data[5] = (int16_t)(command.pitch * 1e4);
+  frame.data[2] = yaw_deg >> 8;//高八位
+  frame.data[3] = yaw_deg & 0xFF;
+  frame.data[4] = pitch_deg >> 8;
+  frame.data[5] = pitch_deg & 0xFF;
   frame.data[6] = (int16_t)(command.horizon_distance * 1e4) >> 8;
   frame.data[7] = (int16_t)(command.horizon_distance * 1e4);
 
+  tools::logger()->info("yaw{} pitch{} degree", yaw_deg, pitch_deg);
   try {
     can_.write(&frame);
   } catch (const std::exception & e) {
